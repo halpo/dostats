@@ -1,6 +1,5 @@
 Package: dostats
 Version: 1.0-20120208
-Date: 2012-02-08
 Title: Compute Statistics helper functions
 Author: Andrew Redd <Andrew.Redd@hsc.utah.edu>
 Maintainer: Andrew Redd <Andrew.Redd@hsc.utah.edu>
