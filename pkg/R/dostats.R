@@ -7,6 +7,7 @@
 #'  @param .na.action the action to take on NA values, for all statistics
 #'
 #'  @return A one row \code{data.frame} with columns named as in \code{...}
+#'  @export
 #'  @seealso \code{\link[plyr]{ldply}}
 #'  @keywords utilities, misc
 #'  @example inst/ex_dostats.R
@@ -28,7 +29,8 @@ dostats <- function(x, ..., .na.action=na.fail){
 #' @param ... passed to \code{\link{dostats}}
 #' @return data frame of computed statistics if x is of class \code{.class}
 #'         otherwise returns \code{NULL}.
-#' @sealso \code{\link{dostats}}
+#'  @export
+#' @seealso \code{\link{dostats}}
 class.stats <- function(.class){
   if(class(.class)!="character")
     .class=as.character(substitute(.class))
@@ -37,6 +39,12 @@ class.stats <- function(.class){
   else NULL
   }
 }
+#' @rdname class.stats
+#'  @export
 numeric.stats <- class.stats(numeric)
+#' @rdname class.stats
+#'  @export
 factor.stats  <- class.stats(factor)
+#' @rdname class.stats
+#'  @export
 integer.stats <- class.stats(integer)
