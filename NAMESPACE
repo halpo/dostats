@@ -1,0 +1,8 @@
+export("%.%")
+export(class.stats)
+export(compose)
+export(dostats)
+export(factor.stats)
+export(integer.stats)
+export(numeric.stats)
+export(wargs)

@@ -1,0 +1,13 @@
+dostats 1.0
+----------------------------
+
+Initial Release 2/8/2012
+
+contains two primary functions
+  * dostats collects functions into a single function to retruns a single row data frame.
+  * compose and the operator alias %.% to nest functions within each other.
+Helper functions are:
+  * wargs wraps a function with new arguments.
+  * class.stats, integer.stats, numeric.stats, and factor.stats help dostats by only doing
+    calling the functions if the variable matches the class specified.
+    This is very helpful with ldply to create summary tables.
