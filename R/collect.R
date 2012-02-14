@@ -1,7 +1,7 @@
 
 #' collect results
 #' @param v a vector, list, array, etc.
-#' @param f a function to collect on
+#' @param fun a function to collect on
 #' @param ... passed to f
 #' 
 #' @details
