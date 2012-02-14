@@ -3,7 +3,7 @@
 #' @param f the function
 #' @param arg the arg to be called as the first argument
 #' 
-#' @return a function that calls \code{f} with \arg as the first argument.
+#' @return a function that calls \code{f} with \code{arg} as the first argument.
 #' @seealso \code{\link{wargs}},  \code{\link{dostats}}, and \code{\link{apply}}
 #' @export
 #' @examples
@@ -20,15 +20,19 @@ onarg <- function(f, arg){
 }
 
 #' Does a table contain a value
+#' @rdname contains
+#' @aliases contains
 #' @param table a table of values
 #' @param y a value
-#' @useage table \%contains\% y
+#' @usage table \%contains\% y
+#' @usage contains(table,y)
 #' 
 #' @details
 #' Literally %in% in reverse order, just for convenience.
 #' 
 #' @return a logical vector of the same length as \code{y} indicating if 
 #'   \code{y} is in \code{table}, i.e. the \code{table} contains \code{y}.
-#' @seealso \code{\link{%\in\%}}
+#' @seealso \code{\link{match}}
+#' @export contains
 #' @export
-`%contains%` <- function(table,y){y %in% table}
+`%contains%` <- contains <- function(table,y){y %in% table}
