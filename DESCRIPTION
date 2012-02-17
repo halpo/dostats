@@ -15,3 +15,7 @@ Collate:
     'compose.R'
     'dostats.R'
     'wargs.R'
+    'onarg.R'
+    'widedf.R'
+    'collect.R'
+    'consecutive.R'
