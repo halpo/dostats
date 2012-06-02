@@ -1,11 +1,12 @@
 {###############################################################################
-# test_wargs.R
+# test_make_new_id.R
 # Copyright 2012 Andrew Redd
-# Date: 6/1/2012
+# This file is part of the R package dostats
+# Date: 5/30/2012
 # 
 # DESCRIPTION
 # ===========
-# unit tests for recombine function
+# testing for make_new_id.
 # 
 # LICENSE
 # ========
@@ -22,13 +23,21 @@
 # dostats. If not, see http://www.gnu.org/licenses/.
 # 
 }###############################################################################
-test_that("testing wargs", {
-  expect_true(!is.na(
-    wargs(mean,na.rm=T)(c(NA, 1:3))
-    ))  
-  paste1 <- wargs(paste, sep='-')
-  expect_equal(
-    paste1(1, 2, 3)
-    , "1-2-3")
-})
+{## setup
+library(testthat)
+library(dostats)
+context("ID maker")
+}
+test_that("make_new_id", {
+id_maker <- make_new_id()
+expect_that(id_maker$new(), equals(1))
+expect_that(id_maker$new(), equals(2))
 
+id_maker$reset(100)
+expect_that(id_maker$new(), equals(101))
+
+id_maker$reset()
+expect_that(id_maker$new(3), equals(1:3))
+
+
+})
