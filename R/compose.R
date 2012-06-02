@@ -48,3 +48,5 @@ compose <- function(..., .list){
 `%.%` <- function(x,y){
   compose(.list=list(x,y))
 }
+
+

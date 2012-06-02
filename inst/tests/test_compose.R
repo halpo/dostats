@@ -4,3 +4,13 @@ test_that("Testing compose", {
   expect_true(compose(any,is.na)(NA))
   expect_true((any%.%is.na)(NA))
 })
+test_that("redirf", {
+exf <- function(..., sep=" ", collapse=NULL)
+{
+    paste(..., sep=sep, collapse=collapse)
+}
+testf <- redirf(paste)
+identical(deparse(exf), deparse(testf), F,F,F,F)
+})
+
+
