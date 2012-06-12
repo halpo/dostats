@@ -31,7 +31,9 @@
 #' @param ... extra agruments
 #' 
 #' @details
-#' 
+#' This is a generic helper function for extracting p values from objects.
+#' The idea being to extract the overall p-value for the model that can
+#' be interpreted simply. 
 #' 
 #' 
 #' @return either a single value (\code{extended=FALSE}) representing the 
@@ -69,7 +71,8 @@ pval.default <- function(x, extended=F, ...){
 }
 
 
-#' @S3method t.test, data.frame
+#' @S3method t.test data.frame
+#' @importFrom stats t.test
 t.test.data.frame <- function(x, ...){
     message('Using dostats altered t.test for data.frames, you might consider using lm.')
     t.test(x[[1]] ~ x[[2]])
