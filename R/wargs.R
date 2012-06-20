@@ -24,17 +24,22 @@
 # dostats. If not, see http://www.gnu.org/licenses/.
 # 
 }###############################################################################
-wrap_function <- function(symb, args, envir){
+wrap_function <- function(symb, args, envir, add...=TRUE){
 #' @param symb symbolic name of function
 #' @param args pairlist of arguments to use
 #' @param envir the environment for the function
+#' @param add... add a ... argument
     newargs <- args
     for(a in setdiff(names(newargs), '...')) {
         newargs[[a]] <- as.name(a)
     }
     wdots <- names(newargs)=='...'
+    if(any(wdots)){
     newargs[wdots] <- list(as.symbol('...'))
     names(newargs)[wdots] <- ''
+    } else if(add...){
+        newargs <- append(newargs, list(as.symbol('...')))
+    }
     c1 <- as.call(append(list(symb), as.list(newargs)))
     c2 <- as.call(c(as.name('{'), (c1)))
     as.function(append(args, list(c2)), envir=envir)
@@ -52,8 +57,13 @@ wrap_function <- function(symb, args, envir){
 #'  mean2 <- wargs(mean, na.rm=T)
 wargs <- function(f, ..., envir = parent.frame()){
     symb <- substitute(f)
-    af   <- formals(f)
     args <- pairlist(...)
+    af   <- formals(f)
+    wdots <- names(af) == '...'
+    arg.specified <- sapply(af, is.null)
+    arg.is.explicit <- 
+        Reduce(`&&`, !arg.specified, accumulate=T) & !arg.specified | wdots
+    af <- af[arg.is.explicit]
     new.args <- c(af[setdiff(names(af), names(args))], args)
     wrap_function(symb, new.args, envir)
 }
@@ -66,11 +76,13 @@ wargs <- function(f, ..., envir = parent.frame()){
 #' form within do.call or plyr functions.
 #' 
 #' @param f a function to wrap a call around
+#' @param envir  the environment to use for the function
+#' @param only... wrap only with a ... argument
 #' 
 #' @export
-redirf <- function(f, envir=parent.frame()){
+redirf <- function(f, envir=parent.frame(), only...=FALSE){
     symb <- substitute(f)
-    args <- formals(f)
+    args <- if(only...) alist(...=) else formals(f)
     wrap_function(symb, args, envir)
 }
 
