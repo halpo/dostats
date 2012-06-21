@@ -26,6 +26,7 @@
 first <- wargs(head, n=1)
 last <- wargs(tail, n=1)
 
+#' @import plyr
 is_uniform <- function(x){
     all(laply(x, isTRUE %.% all.equal, x[[1]]))
 }
