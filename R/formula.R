@@ -74,7 +74,7 @@ reroll <- function(ilist, new.class = 'list'){
     Reduce(rr, ilist, right=TRUE)
 }
 remove_parentheses <- function(f){
-    if(!is.group(f)) return(f)
+    if(!is_group(f)) return(f)
     else f[[-1]]
 }
 }
@@ -155,8 +155,12 @@ parse_table_formula <- function(formula, data) {
     list(left = left, right=right)
 }
 }
-{## Take Names
+
+#' @rdname internal
+#' @S3method take_names dostats.formula.by_two_fun
+#' @export
 take_names <- function(x)UseMethod('take_names')
+{## Take Names
 take_names.default <- function(x){
     if(is.list(x)){
         do.call(rbind, llply(x, take_names))
@@ -169,8 +173,17 @@ take_names.dostats.formula.by_two_fun<- function(x) {
 }
 variable.classes <- paste('dostats', 'formula', .T(variable, Ivar, Xvariable), sep='.')
 }
-{## get_vars
+
+#' @rdname internal
+#' @title Internal Commandes
+#' @export 
+#' @S3method get_vars dostats.formula.by_two_fun
+#' @S3method get_vars dostats.formula.nest
+#' @S3method get_vars dostats.formula.variable
+#' @S3method get_vars dostats.formula.bind
+#' @S3method get_vars default
 get_vars <- function(x)UseMethod('get_vars')
+{## get_vars
 get_vars.dostats.formula.by_two_fun <- function(x){list(x$var)}
 get_vars.dostats.formula.nest <- function(x){
     l <- llply(x, get_vars)
@@ -180,12 +193,23 @@ get_vars.dostats.formula.variable <- function(x){list(x)}
 get_vars.dostats.formula.bind     <- function(x){Filter(Negate(is.null), llply(x, get_vars))}
 get_vars.default <- function(x)return(NULL)
 }
-{## Evaluators
+
+#{## Evaluators
+	#' @rdname internal
+	#' @param x parsed left side of formula
+	#' @param y parsed right side of formula
+	#' @param idf idata.frame object
+	#' 
+	#' @export dseval_right
+	#' @S3method dseval_left dostats.formula.bind
+	#' @S3method dseval_left dostats.formula.nest
+	#' @S3method dseval_left dostats.formula.left
+	#' @S3method dseval_left dostats.formula.variable
+	dseval_left <- function(x, y, idf){UseMethod('dseval_left')}
     {### Left
-        dseval_left <- function(x, y, idf){UseMethod('dseval_left')}
         dseval_left.dostats.formula.bind <- function(x, y, idf) {
             l <- llply(x, dseval_left, y, idf=idf)
-            # structure(Reduce(rbind, l))            
+            structure(Reduce(rbind.hdf, l))            
         }
         dseval_left.dostats.formula.nest <- function(x, y, idf) {
             stop()
@@ -199,15 +223,24 @@ get_vars.default <- function(x)return(NULL)
         }
         dseval_left_var <- function(x, y, idf)UseMethod("dseval_left_var")
     }
+
+	#' @rdname internal
+	#' 
+	#' @export dseval_right
+	#' @S3method dseval_right dostats.formula.function
+	#' @S3method dseval_right dostats.formula.bind
+	#' @S3method dseval_right dostats.formula.by_two_fun
+	#' @S3method dseval_right dostats.formula.nest
+	#' @S3method dseval_right default      
+	dseval_right <- function(y, x, idf) UseMethod('dseval_right')
     {### Right
-        dseval_right <- function(y, x, idf) UseMethod('dseval_right')
         dseval_right.dostats.formula.function <- function(y, x, idf){
             lnam <- attr(x, 'name')
             lvar <- attr(x, 'call')
             name <- attr(y, 'name')
             stopifnot(is.function(y))
             structure(
-                data.frame(y(eval(lvar, idf)))
+                hdf(y(eval(lvar, idf)))
                 , ds.source = c('right', 'formula')
                 , names = name)
         }
@@ -215,10 +248,18 @@ get_vars.default <- function(x)return(NULL)
             # y = right[[2]]
             l <- llply(y, dseval_right, x, idf)
             names <- laply(y, attr, 'name')
-            structure(l, class= c('hdf', 'data.frame', 'list')
+            structure(hdf(l)
                 , ds.source = c('right', 'bind')
                 , names = names
                 , row.names = attr(x, 'name'))
+        }
+        dseval_right.dostats.formula.by_two_fun <- function(y, x, idf) {
+            # y = right[[1]]
+            # x = left[[1]]
+            l <- llply(y$funs, apply_by_two_fun, x=x, y=y$var, idf=idf)
+            structure(hdf(l)
+                     , ds.source = c('right', 'by_two_fun')
+                     , row.names = attr(x, 'name'))
         }
         apply_by_two_fun <- function(fun, x, y, idf){
             # y = right[[1]][[1]]
@@ -236,20 +277,6 @@ get_vars.default <- function(x)return(NULL)
             }
             structure(hdf(rslt), names = fnam)
         }
-        dseval_right.dostats.formula.by_two_fun <- function(y, x, idf) {
-            # y = right[[1]]
-            # x = left[[1]]
-            l <- llply(y$funs, apply_by_two_fun, x=x, y=y$var, idf=idf)
-            structure(l, class=c('hdf', 'data.frame',  'list')
-                     , ds.source = c('right', 'by_two_fun')
-                     , row.names = attr(x, 'name'))
-        }
-        dseval_fork <- function(var, y, x, idf, gen_call){
-            l <- dlply(idf, attr(var, 'call'), gen_call, x=x, y=y)
-            structure(l, class= c('hdf', 'data.frame', 'list')
-                     , ds.source = c('right', 'fork')
-                     , row.names = attr(x, 'name'))
-        }
         dseval_right.dostats.formula.nest <- function(y, x, idf){
             # y = right
             # x = left[[1]]
@@ -263,19 +290,37 @@ get_vars.default <- function(x)return(NULL)
             names(by.level) <- names
             
             rslt <- structure(
-                c(by.var,  by.level)
+                hdf(by.var,  by.level)
                 , class = c('hdf', 'data.frame', 'list')
                 , ds.source = c('right', 'nest')
                 , row.names = attr(x, 'name'))
+            rslt
         }
+        dseval_fork <- function(var, y, x, idf, gen_call){
+            l <- dlply(idf, attr(var, 'call'), gen_call, x=x, y=y)
+            structure(l, class= c('hdf', 'data.frame', 'list')
+                     , ds.source = c('right', 'fork')
+                     , row.names = attr(x, 'name'))
+        }        
         dseval_right.default <- function(y, x, idf)return(NULL)
     }
-    Table1 <- function(formula, data){
-        idf <- if(inherits(data, 'idf')) data else idata.frame(data)
-        parsed    <- parse_table_formula(formula, idf)
-        evaluated <- dseval_left(parsed$left, y=parsed$right, idf)
-        x <- Reduce(rbind.hdf, evaluated)
-    }
+#}
+
+
+#' Create a table of descriptives of a dataset.
+#'
+#' @param formula a formula description of the table.
+#' @param data a data.frame or environment to extract the data from.
+#'
+#' @export
+#' @example inst/examples/ 
+Table1 <- function(formula, data){
+	idf <- if(inherits(data, 'idf')) data else idata.frame(data)
+	parsed    <- parse_table_formula(formula, idf)
+	evaluated <- dseval_left(parsed$left, y=parsed$right, idf)
+  if(length(evaluated)>1)
+    evaluated <- Reduce(rbind.hdf, evaluated)
+  hdf(evaluated)
 }
 
 if(F){# build and test code

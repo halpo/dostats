@@ -34,8 +34,15 @@
 # number of levels and number of missing
 #
 }###############################################################################
-{## hdf - Heirachical Data Frame
 
+#' Heirachical Data Frames
+#' 
+#' The primary purpose of the hdf is to represent data with grouped columns
+#' and grouped rows.
+#' 
+#' @param ... vector, data.frame, or hdf objects to bind together.
+#' 
+#' @export
 hdf <- function(...) {
     l <- list(...)
     if(length(l)==1 && inherits(l[[1]], 'hdf')) return(l[[1]])
@@ -53,6 +60,7 @@ hdf <- function(...) {
     structure(l, class = c('hdf', 'data.frame', 'list'), row.names = rnames)
 }
 
+{## hdf - Heirachical Data Frame
 center_string <- function(x, width= max(nchar(x))){
     sprintf("%*s%*s"
            , ceiling((width + nchar(x))/2), x
@@ -64,7 +72,7 @@ print.hdf <- function(x, ...) {
 }
 
 
-}
+}## hdf - Heirachical Data Frame
 {## find_headers
 .empty_headers <- {data.frame(name = character(0), id=integer(0)
                     , terminal=logical(0), depth=integer(0)
@@ -109,14 +117,14 @@ trace_parents <- function(header, id){
 }
 
 # flatten_headers <- function(df, level.sep="|")
-}
+}## find_headers
 {## format
 #' @S3method format hdf
 format.hdf <- function(x, ...){
     contents <- llply(x, format)
     
 }
-}
+}## format
 {## Conversion
 # as.data.frame.hdf <- function(x){
     # reducer <- function(y) {if (inherits(y, 'hdf')) {
@@ -125,12 +133,12 @@ format.hdf <- function(x, ...){
     # x <- llply(x, reducer)
     # Reduce(data.frame, x)
 # }
-}
+}## Conversion
 {## Utilities
-make_pmat <- function(par){
+make_pmat <- function(par, id=NULL){
     #' make matrix of parentage.
     #' @param par parent list from trace_parents
-    a <- Map(c, leaves$id, par)
+    a <- Map(c, id, par)
     b <- Map(fill_v, a, l=max(laply(a, length)))
     make_call(what=rbind, b)
 }
@@ -180,8 +188,9 @@ copy_names <- function(x, header) {
 
 #' @S3method rbind hdf    
 rbind.hdf <- function(..., check.headers=T) {
-    args <- evaluated
-    # args <- list(...)
+    # args <- evaluated
+    args <- list(...)
+    if(length(args==1) && inherits(args[[1]], 'hdf')) return(args[[1]])
     stopifnot(length(args)>=1)
     header <- find_headers(args[[1]])
     
@@ -192,7 +201,7 @@ rbind.hdf <- function(..., check.headers=T) {
             stop("Not all headers match for all elements; cannot rbind.")
     }
     {## extract paths
-        leaves <- subset(header, terminal==T)
+        leaves <- subset(header, header$terminal==T)
         par   <- trace_parents(header, leaves$id)
         ppath <- make_ppath(leaves$id, header)
     }
@@ -200,7 +209,7 @@ rbind.hdf <- function(..., check.headers=T) {
         elements <- llply(args, Reduce, f=`[[`, x=path)
         make_call(elements, what=c)
     })
-    pmat <- make_pmat(par)
+    pmat <- make_pmat(par, leaves$id)
     ri = recombine_idx(pmat)
     ri = unique(ri)
     raw.new <- recombine.hdf(vectors, ri[-1])
@@ -211,5 +220,5 @@ rbind.hdf <- function(..., check.headers=T) {
 #' @S3method cbind hdf
 cbind.hdf <- redirf(hdf)
 
-}
+}## Utilities
 

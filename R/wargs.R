@@ -40,19 +40,21 @@ wrap_function <- function(symb, args, envir){
     as.function(append(args, list(c2)), envir=envir)
 }
 
-#'  Call with arguments
+#'  Call with arguments.
+#' 
 #'  @param f a function
 #'  @param ... extra arguments
+#' @param envir environment to use for the function.
 #' 
 #'  @return a function that takes 1 argument and calls f with the 
 #'  single argument and the additional \code{...} appended.
 #'  @export
 #'  @keywords utilities, misc
 #'  @examples 
-#'  mean2 <- wargs(mean, na.rm=T)
+#'  mean2 <- wargs(mean, na.rm=TRUE)
 wargs <- function(f, ..., envir = parent.frame()){
     symb <- substitute(f)
-    af   <- formals(f)
+    af   <- formals(args(f))
     args <- pairlist(...)
     new.args <- c(af[setdiff(names(af), names(args))], args)
     wrap_function(symb, new.args, envir)
@@ -60,13 +62,14 @@ wargs <- function(f, ..., envir = parent.frame()){
 
 
 
-#' create a function that redirects to the named function.
+#' Create a function that redirects to the named function.
 #' 
 #' This is usefull for debugging to know what function has been called 
 #' form within do.call or plyr functions.
 #' 
 #' @param f a function to wrap a call around
-#' 
+#' @param envir environment to use for the function.
+#'
 #' @export
 redirf <- function(f, envir=parent.frame()){
     symb <- substitute(f)
