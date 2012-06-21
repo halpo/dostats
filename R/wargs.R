@@ -48,13 +48,14 @@ wrap_function <- function(symb, args, envir, add...=TRUE){
 #'  Call with arguments
 #'  @param f a function
 #'  @param ... extra arguments
+#'  @param envir the environment for the function.
 #' 
 #'  @return a function that takes 1 argument and calls f with the 
 #'  single argument and the additional \code{...} appended.
 #'  @export
 #'  @keywords utilities, misc
 #'  @examples 
-#'  mean2 <- wargs(mean, na.rm=T)
+#'  mean2 <- wargs(mean, na.rm=TRUE)
 wargs <- function(f, ..., envir = parent.frame()){
     symb <- substitute(f)
     args <- pairlist(...)

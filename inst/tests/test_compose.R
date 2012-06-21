@@ -1,3 +1,4 @@
+context("Composition")
 test_that("Testing compose", {
   expect_is(compose(any, is.na), 'function')
   expect_error(compose(any, isna))

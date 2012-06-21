@@ -1,11 +1,21 @@
+dostats 1.2
+-----------
+
+* reworking of how `wargs` works.
+* new function `redirf`
+* new utility functions; `first`, `last`, `listrows` and `fill_v`
+* `me()` is a helper for plyr recursion.
+* `make_call` is a do.call with extra arguments.
+
+
+dostats 1.1 2012-03-08
+----------------------
+
+* `seq_consecutive` follows a vector incrimenting every time there is a change in the source vector.
+* `.T` is a helper function for creating non quoted character vectors.
+
 dostats 1.0
 ----------------------------
-
-1.1 update 3/8/2012
-  Two additions
-    * `seq_consecutive` follows a vector incrimenting every time there is a change in the source vector.
-    * `.T` is a helper function for creating non quoted character vectors.
-
 
 Initial Release 2/8/2012
 

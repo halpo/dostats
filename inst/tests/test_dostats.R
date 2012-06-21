@@ -1,3 +1,4 @@
+context("dostats")
 test_that("Testing dostats",{
   expect_is(dostats(1:3, mean, sd), 'data.frame')
   expect_identical(dostats(1:3, mean, sd), data.frame(mean=2,sd=1))

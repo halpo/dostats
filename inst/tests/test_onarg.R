@@ -1,3 +1,4 @@
+context("onarg")
 test_that("testing onarg", {
   expect_is(onarg(runif,'max'), 'function')
   expect_true(all(onarg(runif, 'max')(1:10,10) < 1:10))
