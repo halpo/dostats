@@ -27,3 +27,4 @@ Collate:
     'hdf.R'
     'pval.R'
     'utils.R'
+    'capply.R'
