@@ -170,7 +170,7 @@ recombine.hdf <- function(x, ri){
 make_ppath <- function(id, header) {
     if(length(id) > 1) return(llply(id, make_ppath, header))
     par <- trace_parents(header, id)
-    reverse(header[c(id, par), 'position'])
+    rev(header[c(id, par), 'position'])
 }
 copy_names <- function(x, header) {
     by.parent <- dlply(header, 'parent', I)

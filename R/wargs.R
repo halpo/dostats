@@ -76,4 +76,3 @@ redirf <- function(f, envir=parent.frame()){
     args <- formals(f)
     wrap_function(symb, args, envir)
 }
-

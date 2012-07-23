@@ -22,7 +22,7 @@
 # dostats. If not, see http://www.gnu.org/licenses/.
 # 
 }###############################################################################
-{## Utilities
+
 first <- wargs(head, n=1)
 last <- wargs(tail, n=1)
 
@@ -84,19 +84,10 @@ me<- function(){
 }
 
 
-#' reverse the order of a vector
-#' @param x any vector
-#' @export
-reverse <- function(x){
-    x[seq(from=length(x), to=1)]
-}
-
 #' Fill vector to length with a specified value
 #' 
 #' @export
 fill_v <- function(x, l=length(x), with=last(x), after=length(x)){
     stopifnot(length(x) <= l)
     append(x, rep(with, l-length(x)), after=after)
-}
-
 }
