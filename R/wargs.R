@@ -52,10 +52,9 @@ wrap_function <- function(symb, args, envir){
 #'  @keywords utilities, misc
 #'  @examples 
 #'  mean2 <- wargs(mean, na.rm=TRUE)
-wargs <- function(f, ..., envir = parent.frame()){
+wargs <- function(f, ..., args=pairlist(...), envir = parent.frame()){
     symb <- substitute(f)
-    af   <- formals(args(f))
-    args <- pairlist(...)
+    af   <- formals(base::args(f))
     new.args <- c(af[setdiff(names(af), names(args))], args)
     wrap_function(symb, new.args, envir)
 }
