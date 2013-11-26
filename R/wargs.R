@@ -24,10 +24,11 @@
 # dostats. If not, see http://www.gnu.org/licenses/.
 # 
 }###############################################################################
-wrap_function <- function(symb, args, envir){
+wrap_function <- function(symb, args, envir, attrs=NULL){
 #' @param symb symbolic name of function
 #' @param args pairlist of arguments to use
 #' @param envir the environment for the function
+#' @param attrs attributes to carry forward
     newargs <- args
     for(a in setdiff(names(newargs), '...')) {
         newargs[[a]] <- as.name(a)
@@ -37,7 +38,10 @@ wrap_function <- function(symb, args, envir){
     names(newargs)[wdots] <- ''
     c1 <- as.call(append(list(symb), as.list(newargs)))
     c2 <- as.call(c(as.name('{'), (c1)))
-    as.function(append(args, list(c2)), envir=envir)
+    newfunction <- as.function(append(args, list(c2)), envir=envir)
+    if(!is.null(attrs))
+        attributes(newfunction) <- attrs
+    return(newfunction)
 }
 
 #'  Call with arguments.
@@ -56,7 +60,7 @@ wargs <- function(f, ..., args=pairlist(...), envir = parent.frame()){
     symb <- substitute(f)
     af   <- formals(base::args(f))
     new.args <- c(af[setdiff(names(af), names(args))], args)
-    wrap_function(symb, new.args, envir)
+    wrap_function(symb, new.args, envir, attrs = attributes(f))
 }
 
 

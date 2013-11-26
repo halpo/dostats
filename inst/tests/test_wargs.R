@@ -31,4 +31,10 @@ test_that("testing wargs", {
     paste1(1, 2, 3)
     , "1-2-3")
 })
-
+test_that("wargs will convey attributes", {
+    a <- list(hello='world')
+    f <- function(x=1){print(x)}
+    attributes(f) <- a
+    g <- wargs(f, x=1)
+    expect_that(attributes(g), equals(attributes(f)))
+})
