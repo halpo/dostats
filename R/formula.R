@@ -312,8 +312,7 @@ get_vars.default <- function(x)return(NULL)
 #' @param formula a formula description of the table.
 #' @param data a data.frame or environment to extract the data from.
 #'
-#' @export
-#' @example inst/examples/ 
+#' 
 Table1 <- function(formula, data){
 	idf <- if(inherits(data, 'idf')) data else idata.frame(data)
 	parsed    <- parse_table_formula(formula, idf)

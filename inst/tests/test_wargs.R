@@ -35,6 +35,6 @@ test_that("wargs will convey attributes", {
     a <- list(hello='world')
     f <- function(x=1){print(x)}
     attributes(f) <- a
-    g <- wargs(f, x=1)
+    g <- wargs(f, x=2)
     expect_that(attributes(g), equals(attributes(f)))
 })

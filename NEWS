@@ -1,11 +1,17 @@
-dostats 1.0
-----------------------------
+Version 1.3
+-----------
+* Improved wargs
 
-1.1 update 3/8/2012
-  Two additions
+
+Version 1.1
+-----------
+update 3/8/2012
+Two additions
     * `seq_consecutive` follows a vector incrimenting every time there is a change in the source vector.
     * `.T` is a helper function for creating non quoted character vectors.
 
+dostats 1.0
+----------------------------
 
 Initial Release 2/8/2012
 

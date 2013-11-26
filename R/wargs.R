@@ -48,7 +48,8 @@ wrap_function <- function(symb, args, envir, attrs=NULL){
 #' 
 #'  @param f a function
 #'  @param ... extra arguments
-#' @param envir environment to use for the function.
+#'  @param args alternate way to provide arguments as a pairlist.
+#'  @param envir environment to use for the function.
 #' 
 #'  @return a function that takes 1 argument and calls f with the 
 #'  single argument and the additional \code{...} appended.
