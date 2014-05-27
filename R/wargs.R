@@ -24,10 +24,11 @@
 # dostats. If not, see http://www.gnu.org/licenses/.
 # 
 }###############################################################################
-wrap_function <- function(symb, args, envir){
+wrap_function <- function(symb, args, envir, attrs=NULL){
 #' @param symb symbolic name of function
 #' @param args pairlist of arguments to use
 #' @param envir the environment for the function
+#' @param attrs attributes to carry forward
     newargs <- args
     for(a in setdiff(names(newargs), '...')) {
         newargs[[a]] <- as.name(a)
@@ -37,14 +38,18 @@ wrap_function <- function(symb, args, envir){
     names(newargs)[wdots] <- ''
     c1 <- as.call(append(list(symb), as.list(newargs)))
     c2 <- as.call(c(as.name('{'), (c1)))
-    as.function(append(args, list(c2)), envir=envir)
+    newfunction <- as.function(append(args, list(c2)), envir=envir)
+    if(!is.null(attrs))
+        attributes(newfunction) <- attrs
+    return(newfunction)
 }
 
 #'  Call with arguments.
 #' 
 #'  @param f a function
 #'  @param ... extra arguments
-#' @param envir environment to use for the function.
+#'  @param args alternate way to provide arguments as a pairlist.
+#'  @param envir environment to use for the function.
 #' 
 #'  @return a function that takes 1 argument and calls f with the 
 #'  single argument and the additional \code{...} appended.
@@ -52,12 +57,11 @@ wrap_function <- function(symb, args, envir){
 #'  @keywords utilities, misc
 #'  @examples 
 #'  mean2 <- wargs(mean, na.rm=TRUE)
-wargs <- function(f, ..., envir = parent.frame()){
+wargs <- function(f, ..., args=pairlist(...), envir = parent.frame()){
     symb <- substitute(f)
-    af   <- formals(args(f))
-    args <- pairlist(...)
+    af   <- formals(base::args(f))
     new.args <- c(af[setdiff(names(af), names(args))], args)
-    wrap_function(symb, new.args, envir)
+    wrap_function(symb, new.args, envir, attrs = attributes(f))
 }
 
 

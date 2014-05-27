@@ -32,11 +32,14 @@ is_uniform <- function(x){
 
 #' List rows of a data frame in a list.
 #' 
+#' @param d a data.frame
+#' 
 #' @export
 listrows <- function(d){mlply(d, list)}
 
 #' Make a helper ID counter
 #' 
+#' @param startat where to start counting
 #' 
 #' @export
 make_new_id <- function(startat=0){
@@ -85,6 +88,11 @@ me<- function(){
 
 
 #' Fill vector to length with a specified value
+#' 
+#' @param x vector
+#' @param l length
+#' @param with What to fill with
+#' @param after where to insert
 #' 
 #' @export
 fill_v <- function(x, l=length(x), with=last(x), after=length(x)){
