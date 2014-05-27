@@ -2,7 +2,9 @@
 # utils.R
 # Copyright 2012 Andrew Redd
 # Date: 6/1/2012
-# 
+#
+#! @include wargs.R
+#
 # DESCRIPTION
 # ===========
 # Table1 function for fomulaic specification of tables.
@@ -157,10 +159,10 @@ parse_table_formula <- function(formula, data) {
 }
 
 #' @rdname internal
-#' @S3method take_names dostats.formula.by_two_fun
 #' @export
 take_names <- function(x)UseMethod('take_names')
-{## Take Names
+#{## Take Names
+#' @export
 take_names.default <- function(x){
     if(is.list(x)){
         do.call(rbind, llply(x, take_names))
@@ -168,31 +170,32 @@ take_names.default <- function(x){
         data.frame(name = attr(x, 'name'), class=first(class(x)))
     }
 }
+#' @export
 take_names.dostats.formula.by_two_fun<- function(x) {
     data.frame(name = attr(x$var[[1]], 'name'), class=first(class(x$var[[1]])))
 }
 variable.classes <- paste('dostats', 'formula', .T(variable, Ivar, Xvariable), sep='.')
-}
+#}
 
 #' @rdname internal
 #' @title Internal Commandes
-#' @export 
-#' @S3method get_vars dostats.formula.by_two_fun
-#' @S3method get_vars dostats.formula.nest
-#' @S3method get_vars dostats.formula.variable
-#' @S3method get_vars dostats.formula.bind
-#' @S3method get_vars default
+#' @export
 get_vars <- function(x)UseMethod('get_vars')
-{## get_vars
+#{## get_vars
+#' @export
 get_vars.dostats.formula.by_two_fun <- function(x){list(x$var)}
+#' @export
 get_vars.dostats.formula.nest <- function(x){
     l <- llply(x, get_vars)
     Filter(Negate(is.null), append(l[[1]], l[[2]]))
 }
+#' @export
 get_vars.dostats.formula.variable <- function(x){list(x)}
+#' @export
 get_vars.dostats.formula.bind     <- function(x){Filter(Negate(is.null), llply(x, get_vars))}
+#' @export
 get_vars.default <- function(x)return(NULL)
-}
+#}
 
 #{## Evaluators
 	#' @rdname internal
@@ -200,40 +203,37 @@ get_vars.default <- function(x)return(NULL)
 	#' @param y parsed right side of formula
 	#' @param idf idata.frame object
 	#' 
-	#' @export dseval_right
-	#' @S3method dseval_left dostats.formula.bind
-	#' @S3method dseval_left dostats.formula.nest
-	#' @S3method dseval_left dostats.formula.left
-	#' @S3method dseval_left dostats.formula.variable
+	#' @export
 	dseval_left <- function(x, y, idf){UseMethod('dseval_left')}
-    {### Left
+    #{### Left
+        #' @export
         dseval_left.dostats.formula.bind <- function(x, y, idf) {
             l <- llply(x, dseval_left, y, idf=idf)
             structure(Reduce(rbind.hdf, l))            
         }
+        #' @export
         dseval_left.dostats.formula.nest <- function(x, y, idf) {
             stop()
             l <- tapply(x[[1]], x[[1]], dseval_left, y, idf=idf)
         }
+        #' @export
         dseval_left.dostats.formula.left <- function(x, y, idf) {
             NextMethod('dseval_left')
         }
+        #' @export
         dseval_left.dostats.formula.variable <- function(x, y, idf){
             dseval_right(y, x, idf)
         }
+        #' @export
         dseval_left_var <- function(x, y, idf)UseMethod("dseval_left_var")
-    }
+    #}
 
 	#' @rdname internal
 	#' 
-	#' @export dseval_right
-	#' @S3method dseval_right dostats.formula.function
-	#' @S3method dseval_right dostats.formula.bind
-	#' @S3method dseval_right dostats.formula.by_two_fun
-	#' @S3method dseval_right dostats.formula.nest
-	#' @S3method dseval_right default      
+	#' @export
 	dseval_right <- function(y, x, idf) UseMethod('dseval_right')
-    {### Right
+    #{### Right
+        #' @export
         dseval_right.dostats.formula.function <- function(y, x, idf){
             lnam <- attr(x, 'name')
             lvar <- attr(x, 'call')
@@ -244,6 +244,7 @@ get_vars.default <- function(x)return(NULL)
                 , ds.source = c('right', 'formula')
                 , names = name)
         }
+        #' @export
         dseval_right.dostats.formula.bind <- function(y, x, idf) {
             # y = right[[2]]
             l <- llply(y, dseval_right, x, idf)
@@ -253,6 +254,7 @@ get_vars.default <- function(x)return(NULL)
                 , names = names
                 , row.names = attr(x, 'name'))
         }
+        #' @export
         dseval_right.dostats.formula.by_two_fun <- function(y, x, idf) {
             # y = right[[1]]
             # x = left[[1]]
@@ -261,6 +263,7 @@ get_vars.default <- function(x)return(NULL)
                      , ds.source = c('right', 'by_two_fun')
                      , row.names = attr(x, 'name'))
         }
+        #' @export
         apply_by_two_fun <- function(fun, x, y, idf){
             # y = right[[1]][[1]]
             # x = left[[1]]
@@ -277,6 +280,7 @@ get_vars.default <- function(x)return(NULL)
             }
             structure(hdf(rslt), names = fnam)
         }
+        #' @export
         dseval_right.dostats.formula.nest <- function(y, x, idf){
             # y = right
             # x = left[[1]]
@@ -296,14 +300,16 @@ get_vars.default <- function(x)return(NULL)
                 , row.names = attr(x, 'name'))
             rslt
         }
+        #' @export
         dseval_fork <- function(var, y, x, idf, gen_call){
             l <- dlply(idf, attr(var, 'call'), gen_call, x=x, y=y)
             structure(l, class= c('hdf', 'data.frame', 'list')
                      , ds.source = c('right', 'fork')
                      , row.names = attr(x, 'name'))
         }        
+        #' @export
         dseval_right.default <- function(y, x, idf)return(NULL)
-    }
+    #}
 #}
 
 

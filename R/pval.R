@@ -43,7 +43,7 @@
 #' @export
 pval <- function(x, extended=F, ...)UseMethod('pval')
 
-#'@S3method pval htest 
+#'@export
 pval.htest <- function(x, extended=F, ...) {
     if(!extended) {
         return(x$p.value)
@@ -52,7 +52,7 @@ pval.htest <- function(x, extended=F, ...) {
     }
 }
 
-#'@S3method pval lm
+#'@export
 pval.lm <- function(x, extended=F,...){
     tab <- anova(x)
     if(extended){
@@ -62,7 +62,7 @@ pval.lm <- function(x, extended=F,...){
     }
 }
 
-#'@S3method pval default
+#'@export
 pval.default <- function(x, extended=F, ...){
     if('p.value' %in% names(x)) return(x$p.value)
     if(.hasSlot(x, 'p.value')) return(x@p.value)
@@ -71,7 +71,7 @@ pval.default <- function(x, extended=F, ...){
 }
 
 
-#' @S3method t.test data.frame
+#' @export
 #' @importFrom stats t.test
 t.test.data.frame <- function(x, ...){
     message('Using dostats altered t.test for data.frames, you might consider using lm.')

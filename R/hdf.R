@@ -66,7 +66,7 @@ center_string <- function(x, width= max(nchar(x))){
            , ceiling((width + nchar(x))/2), x
            , floor((width - nchar(x))/2), '')
 }
-#' @S3method print hdf
+#' @export
 print.hdf <- function(x, ...) {
     
 }
@@ -119,7 +119,7 @@ trace_parents <- function(header, id){
 # flatten_headers <- function(df, level.sep="|")
 }## find_headers
 {## format
-#' @S3method format hdf
+#' @export
 format.hdf <- function(x, ...){
     contents <- llply(x, format)
     
@@ -186,7 +186,7 @@ copy_names <- function(x, header) {
     x
 }
 
-#' @S3method rbind hdf    
+#' @export
 rbind.hdf <- function(..., check.headers=T) {
     # args <- evaluated
     args <- list(...)
@@ -217,7 +217,7 @@ rbind.hdf <- function(..., check.headers=T) {
     new
 }
 
-#' @S3method cbind hdf
+#' @export
 cbind.hdf <- redirf(hdf)
 
 }## Utilities

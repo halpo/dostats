@@ -15,16 +15,4 @@ Suggests:
     testthat
 Description: A small package containing helper utilities for creating function
     for computing statistics.
-Collate:
-    'compose.R'
-    'dostats.R'
-    'wargs.R'
-    'onarg.R'
-    'collect.R'
-    'consecutive.R'
-    'T.R'
-    'formula.R'
-    'hdf.R'
-    'pval.R'
-    'utils.R'
-    'capply.R'
+Roxygen: list(wrap = FALSE)

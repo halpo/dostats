@@ -67,7 +67,7 @@ wargs <- function(f, ..., envir = parent.frame()){
 #' This is usefull for debugging to know what function has been called 
 #' form within do.call or plyr functions.
 #' 
-#' @param f a function to wrap a call around
+#' @param f     a function to wrap a call around
 #' @param envir environment to use for the function.
 #'
 #' @export
