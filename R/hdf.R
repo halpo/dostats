@@ -5,6 +5,8 @@
 # Copyright 2012 Andrew Redd
 # Date: 6/1/2012
 # 
+#' @include wargs.R 
+# 
 # DESCRIPTION
 # ===========
 # Functions for handling Heirarchical Data Frames 

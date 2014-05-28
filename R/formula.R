@@ -3,7 +3,7 @@
 # Copyright 2012 Andrew Redd
 # Date: 6/1/2012
 #
-#! @include wargs.R
+#' @include wargs.R
 #
 # DESCRIPTION
 # ===========
@@ -178,7 +178,7 @@ variable.classes <- paste('dostats', 'formula', .T(variable, Ivar, Xvariable), s
 #}
 
 #' @rdname internal
-#' @title Internal Commandes
+#' @title Internal formula Commands
 #' @export
 get_vars <- function(x)UseMethod('get_vars')
 #{## get_vars
@@ -198,118 +198,125 @@ get_vars.default <- function(x)return(NULL)
 #}
 
 #{## Evaluators
-	#' @rdname internal
-	#' @param x parsed left side of formula
-	#' @param y parsed right side of formula
-	#' @param idf idata.frame object
-	#' 
-	#' @export
-	dseval_left <- function(x, y, idf){UseMethod('dseval_left')}
-    #{### Left
-        #' @export
-        dseval_left.dostats.formula.bind <- function(x, y, idf) {
-            l <- llply(x, dseval_left, y, idf=idf)
-            structure(Reduce(rbind.hdf, l))            
-        }
-        #' @export
-        dseval_left.dostats.formula.nest <- function(x, y, idf) {
-            stop()
-            l <- tapply(x[[1]], x[[1]], dseval_left, y, idf=idf)
-        }
-        #' @export
-        dseval_left.dostats.formula.left <- function(x, y, idf) {
-            NextMethod('dseval_left')
-        }
-        #' @export
-        dseval_left.dostats.formula.variable <- function(x, y, idf){
-            dseval_right(y, x, idf)
-        }
-        #' @export
-        dseval_left_var <- function(x, y, idf)UseMethod("dseval_left_var")
-    #}
+#' @rdname internal
+#' @title Internal formula manipulation and evaluation
+#' 
+#' @param x parsed left side of formula
+#' @param y parsed right side of formula
+#' @param idf idata.frame object
+#' 
+#' @export
+dseval_left <- function(x, y, idf){UseMethod('dseval_left')}
+#{### Left
+#' @export
+dseval_left.dostats.formula.bind <- function(x, y, idf) {
+    l <- llply(x, dseval_left, y, idf=idf)
+    structure(Reduce(rbind.hdf, l))            
+}
+#' @export
+dseval_left.dostats.formula.nest <- function(x, y, idf) {
+    stop()
+    l <- tapply(x[[1]], x[[1]], dseval_left, y, idf=idf)
+}
+#' @export
+dseval_left.dostats.formula.left <- function(x, y, idf) {
+    NextMethod('dseval_left')
+}
+#' @export
+dseval_left.dostats.formula.variable <- function(x, y, idf){
+    dseval_right(y, x, idf)
+}
+#' @rdname internal
+#' @export
+dseval_left_var <- function(x, y, idf)UseMethod("dseval_left_var")
+#}
 
-	#' @rdname internal
-	#' 
-	#' @export
-	dseval_right <- function(y, x, idf) UseMethod('dseval_right')
-    #{### Right
-        #' @export
-        dseval_right.dostats.formula.function <- function(y, x, idf){
-            lnam <- attr(x, 'name')
-            lvar <- attr(x, 'call')
-            name <- attr(y, 'name')
-            stopifnot(is.function(y))
-            structure(
-                hdf(y(eval(lvar, idf)))
-                , ds.source = c('right', 'formula')
-                , names = name)
-        }
-        #' @export
-        dseval_right.dostats.formula.bind <- function(y, x, idf) {
-            # y = right[[2]]
-            l <- llply(y, dseval_right, x, idf)
-            names <- laply(y, attr, 'name')
-            structure(hdf(l)
-                , ds.source = c('right', 'bind')
-                , names = names
-                , row.names = attr(x, 'name'))
-        }
-        #' @export
-        dseval_right.dostats.formula.by_two_fun <- function(y, x, idf) {
-            # y = right[[1]]
-            # x = left[[1]]
-            l <- llply(y$funs, apply_by_two_fun, x=x, y=y$var, idf=idf)
-            structure(hdf(l)
-                     , ds.source = c('right', 'by_two_fun')
-                     , row.names = attr(x, 'name'))
-        }
-        #' @export
-        apply_by_two_fun <- function(fun, x, y, idf){
-            # y = right[[1]][[1]]
-            # x = left[[1]]
-            # fun = right[[1]][[2]][[1]]
-            stopifnot(is.function(fun))
-            lnam <- attr(x, 'name')
-            lvar <- attr(x, 'call')
-            fnam <- attr(fun, 'name')
-            rnam <- attr(y, 'name')
-            rvar <- attr(y, 'call')
-            rslt <- fun(data.frame(eval(lvar, idf), eval(rvar, idf)))
-            if(!is_unitary(rslt) && !is.data.frame(rslt)){
-                rslt  = format.pval(pval(rslt))
-            }
-            structure(hdf(rslt), names = fnam)
-        }
-        #' @export
-        dseval_right.dostats.formula.nest <- function(y, x, idf){
-            # y = right
-            # x = left[[1]]
-            stopifnot(length(y)==2)
-            by.var <- dseval_right(y[[1]], x=x, idf=idf)
-            
-            vars <- get_vars(y[[1]])
-            by.level <- 
-            llply(vars, dseval_fork, y=y[[2]], x=x, idf=idf, gen_call=dseval_right)
-            names <- laply(vars, attr, 'name')
-            names(by.level) <- names
-            
-            rslt <- structure(
-                hdf(by.var,  by.level)
-                , class = c('hdf', 'data.frame', 'list')
-                , ds.source = c('right', 'nest')
-                , row.names = attr(x, 'name'))
-            rslt
-        }
-        #' @export
-        dseval_fork <- function(var, y, x, idf, gen_call){
-            l <- dlply(idf, attr(var, 'call'), gen_call, x=x, y=y)
-            structure(l, class= c('hdf', 'data.frame', 'list')
-                     , ds.source = c('right', 'fork')
-                     , row.names = attr(x, 'name'))
-        }        
-        #' @export
-        dseval_right.default <- function(y, x, idf)return(NULL)
-    #}
+#' @rdname internal
+#' @export
+dseval_right <- function(y, x, idf) UseMethod('dseval_right')
+#{### Right
+#' @export
+dseval_right.dostats.formula.function <- function(y, x, idf){
+    lnam <- attr(x, 'name')
+    lvar <- attr(x, 'call')
+    name <- attr(y, 'name')
+    stopifnot(is.function(y))
+    structure(
+        hdf(y(eval(lvar, idf)))
+        , ds.source = c('right', 'formula')
+        , names = name)
+}
+#' @export
+dseval_right.dostats.formula.bind <- function(y, x, idf) {
+    # y = right[[2]]
+    l <- llply(y, dseval_right, x, idf)
+    names <- laply(y, attr, 'name')
+    structure(hdf(l)
+        , ds.source = c('right', 'bind')
+        , names = names
+        , row.names = attr(x, 'name'))
+}
+#' @export
+dseval_right.dostats.formula.by_two_fun <- function(y, x, idf) {
+    # y = right[[1]]
+    # x = left[[1]]
+    l <- llply(y$funs, apply_by_two_fun, x=x, y=y$var, idf=idf)
+    structure(hdf(l)
+             , ds.source = c('right', 'by_two_fun')
+             , row.names = attr(x, 'name'))
+}
+#' @rdname internal
+#' @param fun function to apply
+#' @export
+apply_by_two_fun <- function(fun, x, y, idf){
+    # y = right[[1]][[1]]
+    # x = left[[1]]
+    # fun = right[[1]][[2]][[1]]
+    stopifnot(is.function(fun))
+    lnam <- attr(x, 'name')
+    lvar <- attr(x, 'call')
+    fnam <- attr(fun, 'name')
+    rnam <- attr(y, 'name')
+    rvar <- attr(y, 'call')
+    rslt <- fun(data.frame(eval(lvar, idf), eval(rvar, idf)))
+    if(!is_unitary(rslt) && !is.data.frame(rslt)){
+        rslt  = format.pval(pval(rslt))
+    }
+    structure(hdf(rslt), names = fnam)
+}
+#' @export
+dseval_right.dostats.formula.nest <- function(y, x, idf){
+    # y = right
+    # x = left[[1]]
+    stopifnot(length(y)==2)
+    by.var <- dseval_right(y[[1]], x=x, idf=idf)
+    
+    vars <- get_vars(y[[1]])
+    by.level <- 
+    llply(vars, dseval_fork, y=y[[2]], x=x, idf=idf, gen_call=dseval_right)
+    names <- laply(vars, attr, 'name')
+    names(by.level) <- names
+    
+    rslt <- structure(
+        hdf(by.var,  by.level)
+        , class = c('hdf', 'data.frame', 'list')
+        , ds.source = c('right', 'nest')
+        , row.names = attr(x, 'name'))
+    rslt
+}
+#' @rdname internal
+#' @param var variable to extract call from
+#' @param gen_call generic call
+#' @export
+dseval_fork <- function(var, y, x, idf, gen_call){
+    l <- dlply(idf, attr(var, 'call'), gen_call, x=x, y=y)
+    structure(l, class= c('hdf', 'data.frame', 'list')
+             , ds.source = c('right', 'fork')
+             , row.names = attr(x, 'name'))
+}        
+#' @export
+dseval_right.default <- function(y, x, idf)return(NULL)
+#}
 #}
 
 
