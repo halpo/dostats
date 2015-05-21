@@ -23,7 +23,21 @@
 # 
 }###############################################################################
 
+
+#' @rdname head-tail-utils.Rd
+#' @name first
+#' @title Head/Tail shortcuts
+#' 
+#' @description
+#' Shortcuts for \code{head(x,1)} and \code{tail(x, 1)}
+#' 
+#' 
+#' 
+#' 
+#' @export
 first <- wargs(head, n=1)
+#' @rdname head-tail-utils.Rd
+#' @export
 last <- wargs(tail, n=1)
 
 is_uniform <- function(x){

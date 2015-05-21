@@ -31,9 +31,11 @@
 #' @export
 #' @examples
 #' .T(min, mean, 'median')
-.T <-
-function(...){
-  as.character(substitute(c(...)))[-1]
+.T <- function(...){
+    c <- as.character(x <- substitute(c(...)))[-1]
+    names(c) <- names(as.list(x))[-1]
+    return(c)
 }
+
 
 
