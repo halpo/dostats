@@ -1,4 +1,5 @@
 .*.gitignore
 ^\.Rproj\.user$
+.*\.Rproj
 experiments
 .geany
