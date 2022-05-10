@@ -3,43 +3,45 @@
 # Copyright 2012 Andrew Redd
 # This file is part of the R package dostats
 # Date: 5/30/2012
-# 
+#
 # DESCRIPTION
 # ===========
 # Convenience functions for extracting pvalues and formatting test results.
-# 
+#
 # LICENSE
 # ========
 # dostats is free software: you can redistribute it and/or modify it under the
-# terms of the GNU General Public License as published by the Free Software 
-# Foundation, either version 3 of the License, or (at your option) any later 
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
 # version.
-# 
-# dostats is distributed in the hope that it will be useful, but WITHOUT ANY 
-# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+#
+# dostats is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 # FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License along with 
+#
+# You should have received a copy of the GNU General Public License along with
 # dostats. If not, see http://www.gnu.org/licenses/.
-# 
+#
 }###############################################################################
+#' @importFrom methods .hasSlot
+NULL
 
 #' Extract a p-value fomr a test result.
-#' 
+#'
 #' @param x a testing result object
 #' @param extended should an extended result be given or a single p-value.
 #' @param ... extra agruments
-#' 
+#'
 #' @details
 #' This is a generic helper function for extracting p values from objects.
 #' The idea being to extract the overall p-value for the model that can
-#' be interpreted simply. 
-#' 
-#' 
-#' @return either a single value (\code{extended=FALSE}) representing the 
+#' be interpreted simply.
+#'
+#'
+#' @return either a single value (\code{extended=FALSE}) representing the
 #'         p-value of the test or a single row.
 #'         \link{data.frame} object that also incldues extra information such as
-#'         
+#'
 #' @export
 pval <- function(x, extended=F, ...)UseMethod('pval')
 
