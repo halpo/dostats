@@ -2,7 +2,7 @@
 ## Introduction ##
 The `dostats` R package is a compilation of helper utilities for computing statistics and operating
 on R as a language.  It is particularly helpful with packages like 
-[plyr](http://cran.r-project.org/package=plyr), but is useful anytime that simple functions have to
+[plyr](https://cran.r-project.org/package=plyr), but is useful anytime that simple functions have to
 be defined.
 
 ## Details ##
