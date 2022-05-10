@@ -36,7 +36,7 @@
 #' Functional composition of functions f and g is defined as f(g(.)).
 #' Order matters the right most function listed will be the innermost
 #' function in the composition, same with the operator version.
-#' To remember the order lists will be the order read out, ie.
+#' To remember the order lists will be the order read out, i.e.
 #' compose(f,g) = f(g(x))
 #'
 #' When using the operator version it is good to remember that parentheses

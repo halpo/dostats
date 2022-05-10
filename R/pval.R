@@ -26,11 +26,11 @@
 #' @importFrom methods .hasSlot
 NULL
 
-#' Extract a p-value fomr a test result.
+#' Extract a p-value from a test result.
 #'
 #' @param x a testing result object
 #' @param extended should an extended result be given or a single p-value.
-#' @param ... extra agruments
+#' @param ... extra arguments passed to methods.
 #'
 #' @details
 #' This is a generic helper function for extracting p values from objects.
@@ -40,7 +40,7 @@ NULL
 #'
 #' @return either a single value (\code{extended=FALSE}) representing the
 #'         p-value of the test or a single row.
-#'         \link{data.frame} object that also incldues extra information such as
+#'         \link{data.frame} object that also includes extra information such as
 #'
 #' @export
 pval <- function(x, extended=F, ...)UseMethod('pval')

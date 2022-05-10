@@ -66,8 +66,8 @@ wargs <- function(f, ..., args=pairlist(...), envir = parent.frame()){
 
 #' Create a function that redirects to the named function.
 #'
-#' This is usefull for debugging to know what function has been called
-#' form within do.call or plyr functions.
+#' This is useful for debugging to know what function has been called
+#' form within do.call or `plyr` functions.
 #'
 #' @param f     a function to wrap a call around
 #' @param envir environment to use for the function.
